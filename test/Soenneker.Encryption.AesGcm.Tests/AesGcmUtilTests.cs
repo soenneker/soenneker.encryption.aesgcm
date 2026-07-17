@@ -22,7 +22,7 @@ public sealed class AesGcmUtilTests : HostedUnitTest
     [Test]
     public void Encrypt_and_decrypt_roundtrip_string()
     {
-        const string key = "leadping-development-test-key";
+        const string key = "example-development-test-key";
         const string secret = "super-secret-webhook-token";
 
         string encrypted = AesGcmUtil.Encrypt(secret, key);
@@ -35,7 +35,7 @@ public sealed class AesGcmUtilTests : HostedUnitTest
     [Test]
     public void Encrypt_uses_random_nonce_each_time()
     {
-        const string key = "leadping-development-test-key";
+        const string key = "example-development-test-key";
         const string secret = "super-secret-webhook-token";
 
         string first = AesGcmUtil.Encrypt(secret, key);
@@ -60,7 +60,7 @@ public sealed class AesGcmUtilTests : HostedUnitTest
     [Test]
     public void Decrypt_requires_same_associated_data()
     {
-        const string key = "leadping-development-test-key";
+        const string key = "example-development-test-key";
         const string secret = "super-secret-webhook-token";
         const string associatedData = "business-1:generic-webhook";
 
@@ -87,7 +87,7 @@ public sealed class AesGcmUtilTests : HostedUnitTest
     [Test]
     public void BuildKey_hashes_non_aes_sized_key_material()
     {
-        byte[] key = AesGcmUtil.BuildKey("leadping-development-test-key");
+        byte[] key = AesGcmUtil.BuildKey("example-development-test-key");
 
         key.Length.Should().Be(32);
     }
@@ -95,7 +95,7 @@ public sealed class AesGcmUtilTests : HostedUnitTest
     [Test]
     public void TryDecrypt_returns_false_for_malformed_payload()
     {
-        bool result = AesGcmUtil.TryDecrypt("not-encrypted", "leadping-development-test-key", out string? plaintext);
+        bool result = AesGcmUtil.TryDecrypt("not-encrypted", "example-development-test-key", out string? plaintext);
 
         result.Should().BeFalse();
         plaintext.Should().BeNull();

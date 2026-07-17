@@ -33,4 +33,4 @@ string encrypted = AesGcmUtil.Encrypt(secret, key, associatedData: "business-1:g
 string decrypted = AesGcmUtil.Decrypt(encrypted, key, associatedData: "business-1:generic-webhook");
 ```
 
-Key material can be a base64 encoded 128-bit, 192-bit, or 256-bit AES key. Other key material is hashed with SHA-256 into a 256-bit AES key, matching the original Leadping credential encryption behavior.
+Key material can be a base64 encoded 128-bit, 192-bit, or 256-bit AES key. Other key material is hashed with SHA-256 into a 256-bit AES key.
