@@ -2,35 +2,45 @@
 [![](https://img.shields.io/github/actions/workflow/status/soenneker/soenneker.encryption.aesgcm/publish-package.yml?style=for-the-badge)](https://github.com/soenneker/soenneker.encryption.aesgcm/actions/workflows/publish-package.yml)
 [![](https://img.shields.io/nuget/dt/soenneker.encryption.aesgcm.svg?style=for-the-badge)](https://www.nuget.org/packages/soenneker.encryption.aesgcm/)
 
-# ![](https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png) Soenneker.Encryption.AesGcm
-### A .NET utility wrapping AES-GCM BCL for symmetric encryption.
+# Soenneker.Encryption.AesGcm
 
-## Installation
+Constants used by the AES-GCM utility.
 
-```
+## Install
+
+```bash
 dotnet add package Soenneker.Encryption.AesGcm
 ```
 
-## Usage
+## Quick start
 
 ```csharp
 using Soenneker.Encryption.AesGcm;
 
-string encrypted = AesGcmUtil.Encrypt("super-secret-webhook-token", "configured-key-material");
-string decrypted = AesGcmUtil.Decrypt(encrypted, "configured-key-material");
+var result = AesGcmUtil.Encrypt("value", "value");
 ```
 
-The default string payload format is:
+Encrypts a UTF-8 string and returns an encoded payload in the format prefix:nonce:ciphertext:tag.
 
-```text
-v1:<base64 nonce>:<base64 ciphertext>:<base64 tag>
-```
+## What you get
 
-For authenticated context binding, pass associated data during both encryption and decryption:
+- `AesGcmConstants` — Constants used by the AES-GCM utility.
+- `AesGcmUtil` — A .NET utility wrapping AES-GCM BCL for symmetric encryption.
+- `AesGcmEncryptedPayload` — Represents the raw AES-GCM encryption output.
 
-```csharp
-string encrypted = AesGcmUtil.Encrypt(secret, key, associatedData: "business-1:generic-webhook");
-string decrypted = AesGcmUtil.Decrypt(encrypted, key, associatedData: "business-1:generic-webhook");
-```
+## API at a glance
 
-Key material can be a base64 encoded 128-bit, 192-bit, or 256-bit AES key. Other key material is hashed with SHA-256 into a 256-bit AES key.
+| API | What it does | Result / important behavior |
+| --- | --- | --- |
+| `AesGcmConstants.NonceSizeInBytes` | The recommended AES-GCM nonce size in bytes. | The recommended AES-GCM nonce size in bytes. |
+| `AesGcmConstants.TagSizeInBytes` | The default AES-GCM authentication tag size in bytes. | The default AES-GCM authentication tag size in bytes. |
+| `AesGcmConstants.DefaultPrefix` | The default encoded payload version prefix. | The default encoded payload version prefix. |
+| `AesGcmUtil.Encrypt(plaintext, keyMaterial, associatedData, prefix)` | Encrypts a UTF-8 string and returns an encoded payload in the format prefix:nonce:ciphertext:tag. | Returns `string`. |
+| `AesGcmUtil.Decrypt(encryptedValue, keyMaterial, associatedData, expectedPrefix)` | Decrypts an encoded AES-GCM payload produced by `Encrypt(string,string,string?,string)`. | Returns `string`. |
+| `AesGcmUtil.TryDecrypt(encryptedValue, keyMaterial, plaintext, associatedData, expectedPrefix)` | Attempts to decrypt an encoded AES-GCM payload without throwing for malformed payloads or authentication failures. | true if the requested update was applied; otherwise, false. |
+| `AesGcmUtil.Encrypt(plaintext, keyMaterial)` | Encrypts bytes and returns the raw nonce, ciphertext, and authentication tag. | The resulting aes Gcm Encrypted Payload. |
+| `AesGcmUtil.Encrypt(plaintext, keyMaterial, associatedData)` | Encrypts bytes with associated authenticated data and returns the raw nonce, ciphertext, and authentication tag. | The resulting aes Gcm Encrypted Payload. |
+| `AesGcmUtil.Decrypt(payload, keyMaterial)` | Decrypts a raw AES-GCM payload. | The resulting byte[]. |
+| `AesGcmUtil.Decrypt(payload, keyMaterial, associatedData)` | Decrypts a raw AES-GCM payload with associated authenticated data. | The resulting byte[]. |
+| `AesGcmUtil.BuildKey(keyMaterial)` | Builds a usable AES key from configured key material. | The resulting byte[]. |
+| `AesGcmEncryptedPayload.Validate()` | Validates the nonce, ciphertext, and tag lengths. | Returns no value; the requested change is complete when the method returns. |
