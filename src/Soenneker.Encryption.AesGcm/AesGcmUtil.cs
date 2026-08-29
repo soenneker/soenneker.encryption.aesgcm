@@ -13,6 +13,11 @@ public static class AesGcmUtil
     /// <summary>
     /// Encrypts a UTF-8 string and returns an encoded payload in the format prefix:nonce:ciphertext:tag.
     /// </summary>
+    /// <param name="plaintext">Unencrypted bytes to protect.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <param name="associatedData">Additional authenticated data bound to the ciphertext.</param>
+    /// <param name="prefix">Prefix prepended to generated keys or names.</param>
+    /// <returns>The text produced by encrypt.</returns>
     public static string Encrypt(string plaintext, string keyMaterial, string? associatedData = null,
         string prefix = AesGcmConstants.DefaultPrefix)
     {
@@ -48,6 +53,11 @@ public static class AesGcmUtil
     /// <summary>
     /// Decrypts an encoded AES-GCM payload produced by <see cref="Encrypt(string,string,string?,string)"/>.
     /// </summary>
+    /// <param name="encryptedValue">Encrypted Value for the decrypt operation.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <param name="associatedData">Additional authenticated data bound to the ciphertext.</param>
+    /// <param name="expectedPrefix">Expected Prefix for the decrypt operation.</param>
+    /// <returns>The text produced by decrypt.</returns>
     public static string Decrypt(string encryptedValue, string keyMaterial, string? associatedData = null,
         string expectedPrefix = AesGcmConstants.DefaultPrefix)
     {
@@ -83,6 +93,12 @@ public static class AesGcmUtil
     /// <summary>
     /// Attempts to decrypt an encoded AES-GCM payload without throwing for malformed payloads or authentication failures.
     /// </summary>
+    /// <param name="encryptedValue">Encrypted Value for the try decrypt operation.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <param name="plaintext">Unencrypted bytes to protect.</param>
+    /// <param name="associatedData">Additional authenticated data bound to the ciphertext.</param>
+    /// <param name="expectedPrefix">Expected Prefix for the try decrypt operation.</param>
+    /// <returns>true if the requested update was applied; otherwise, false.</returns>
     public static bool TryDecrypt(string encryptedValue, string keyMaterial, out string? plaintext,
         string? associatedData = null, string expectedPrefix = AesGcmConstants.DefaultPrefix)
     {
@@ -102,6 +118,9 @@ public static class AesGcmUtil
     /// <summary>
     /// Encrypts bytes and returns the raw nonce, ciphertext, and authentication tag.
     /// </summary>
+    /// <param name="plaintext">Unencrypted bytes to protect.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <returns>The resulting aes Gcm Encrypted Payload.</returns>
     public static AesGcmEncryptedPayload Encrypt(ReadOnlySpan<byte> plaintext, ReadOnlySpan<byte> keyMaterial)
     {
         return Encrypt(plaintext, keyMaterial, ReadOnlySpan<byte>.Empty);
@@ -110,6 +129,10 @@ public static class AesGcmUtil
     /// <summary>
     /// Encrypts bytes with associated authenticated data and returns the raw nonce, ciphertext, and authentication tag.
     /// </summary>
+    /// <param name="plaintext">Unencrypted bytes to protect.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <param name="associatedData">Additional authenticated data bound to the ciphertext.</param>
+    /// <returns>The resulting aes Gcm Encrypted Payload.</returns>
     public static AesGcmEncryptedPayload Encrypt(ReadOnlySpan<byte> plaintext, ReadOnlySpan<byte> keyMaterial,
         ReadOnlySpan<byte> associatedData)
     {
@@ -128,6 +151,9 @@ public static class AesGcmUtil
     /// <summary>
     /// Decrypts a raw AES-GCM payload.
     /// </summary>
+    /// <param name="payload">Payload processed by the operation.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <returns>The resulting byte[].</returns>
     public static byte[] Decrypt(AesGcmEncryptedPayload payload, ReadOnlySpan<byte> keyMaterial)
     {
         return Decrypt(payload, keyMaterial, ReadOnlySpan<byte>.Empty);
@@ -136,6 +162,10 @@ public static class AesGcmUtil
     /// <summary>
     /// Decrypts a raw AES-GCM payload with associated authenticated data.
     /// </summary>
+    /// <param name="payload">Payload processed by the operation.</param>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <param name="associatedData">Additional authenticated data bound to the ciphertext.</param>
+    /// <returns>The resulting byte[].</returns>
     public static byte[] Decrypt(AesGcmEncryptedPayload payload, ReadOnlySpan<byte> keyMaterial,
         ReadOnlySpan<byte> associatedData)
     {
@@ -157,6 +187,8 @@ public static class AesGcmUtil
     /// <summary>
     /// Builds a usable AES key from configured key material.
     /// </summary>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <returns>The resulting byte[].</returns>
     public static byte[] BuildKey(string keyMaterial)
     {
         ValidateKeyMaterial(keyMaterial);
@@ -189,6 +221,8 @@ public static class AesGcmUtil
     /// <summary>
     /// Builds a usable AES key from configured key material bytes.
     /// </summary>
+    /// <param name="keyMaterial">Key bytes used by the cryptographic operation.</param>
+    /// <returns>The resulting byte[].</returns>
     public static byte[] BuildKey(ReadOnlySpan<byte> keyMaterial)
     {
         if (keyMaterial.IsEmpty)
