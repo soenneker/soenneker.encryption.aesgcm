@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using Soenneker.Extensions.String;
+using Soenneker.Hashing.Sha256;
 
 namespace Soenneker.Encryption.AesGcm;
 
@@ -10,6 +11,8 @@ namespace Soenneker.Encryption.AesGcm;
 /// </summary>
 public static class AesGcmUtil
 {
+    private static readonly Sha256HashingUtil _sha256 = new();
+
     /// <summary>
     /// Encrypts a UTF-8 string and returns an encoded payload in the format prefix:nonce:ciphertext:tag.
     /// </summary>
@@ -210,7 +213,7 @@ public static class AesGcmUtil
 
         try
         {
-            return SHA256.HashData(keyMaterialBytes);
+            return _sha256.Hash(keyMaterialBytes);
         }
         finally
         {
@@ -231,7 +234,7 @@ public static class AesGcmUtil
         if (IsValidAesKeyLength(keyMaterial.Length))
             return keyMaterial.ToArray();
 
-        return SHA256.HashData(keyMaterial);
+        return _sha256.Hash(keyMaterial);
     }
 
     private static AesGcmEncryptedPayload EncryptWithKey(ReadOnlySpan<byte> plaintext, ReadOnlySpan<byte> key,
