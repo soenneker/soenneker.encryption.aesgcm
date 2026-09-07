@@ -196,17 +196,15 @@ public static class AesGcmUtil
     {
         ValidateKeyMaterial(keyMaterial);
 
+        Span<byte> decoded = stackalloc byte[32];
         try
         {
-            byte[] decoded = keyMaterial.ToBytesFromBase64();
-
-            if (IsValidAesKeyLength(decoded.Length))
-                return decoded;
-
-            CryptographicOperations.ZeroMemory(decoded);
+            if (Convert.TryFromBase64String(keyMaterial, decoded, out int written) && IsValidAesKeyLength(written))
+                return decoded[..written].ToArray();
         }
-        catch (FormatException)
+        finally
         {
+            CryptographicOperations.ZeroMemory(decoded);
         }
 
         byte[] keyMaterialBytes = keyMaterial.ToBytes();
